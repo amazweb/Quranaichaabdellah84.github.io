@@ -401,6 +401,7 @@
       const json = await res.json();
       state.surahs = json.data || [];
       renderSurahList(state.surahs);
+      if(!state.currentSurahNumber) loadSurah(1);
     }catch(err){
       els.surahList.innerHTML = '<li class="state-msg" style="color:var(--gold-soft);">Could not load the surah list. Check your connection and reload the page.</li>';
     }
@@ -639,10 +640,14 @@
   });
 
   // ---------- Navigation ----------
+  function openReader(){
+    document.getElementById('reader').scrollIntoView({behavior:'smooth'});
+    if(!state.currentSurahNumber) loadSurah(1);
+  }
   document.getElementById('brandBtn').addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
-  document.getElementById('startReading').addEventListener('click', ()=> document.getElementById('reader').scrollIntoView({behavior:'smooth'}));
-  document.getElementById('scrollList').addEventListener('click', ()=> document.getElementById('reader').scrollIntoView({behavior:'smooth'}));
-  document.getElementById('navRead').addEventListener('click', ()=> document.getElementById('reader').scrollIntoView({behavior:'smooth'}));
+  document.getElementById('startReading').addEventListener('click', openReader);
+  document.getElementById('scrollList').addEventListener('click', openReader);
+  document.getElementById('navRead').addEventListener('click', openReader);
 
   function closeMobileSidebar(){
     els.sidebar.classList.remove('open');
