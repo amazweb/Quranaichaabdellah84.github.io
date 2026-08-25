@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> Quran, Recitation &amp; Tafsir</title>
+<title>Aicha Abdellah — Quran, Recitation &amp; Tafsir</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -560,12 +560,15 @@
     panel.innerHTML = '<span class="label">Tafsir Ibn Kathir</span>Loading commentary…';
     const ayah = state.ayahs[idx];
     const verseKey = state.currentSurahNumber+':'+ayah.numberInSurah;
+    const url = 'https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/en-tafisr-ibn-kathir/'+state.currentSurahNumber+'/'+ayah.numberInSurah+'.json';
     try{
-      const res = await fetch('https://api.quran.com/api/v4/quran/tafsirs/en-tafisr-ibn-kathir?verse_key='+verseKey);
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('http '+res.status);
       const json = await res.json();
-      const raw = json && json.tafsirs && json.tafsirs[0] ? json.tafsirs[0].text : null;
+      const raw = json && json.text ? json.text : null;
       if(!raw) throw new Error('empty');
-      panel.innerHTML = '<span class="label">Tafsir Ibn Kathir · '+verseKey+'</span>' + sanitizeTafsir(raw);
+      const paras = raw.split(/\n+/).filter(Boolean).map(p => '<p>'+escapeHtml(p)+'</p>').join('');
+      panel.innerHTML = '<span class="label">Tafsir Ibn Kathir · '+verseKey+'</span>' + paras;
       panel.dataset.loaded = 'true';
     }catch(err){
       panel.innerHTML = '<span class="label">Tafsir</span>Commentary for this verse could not be loaded right now. Please try again in a moment.';
